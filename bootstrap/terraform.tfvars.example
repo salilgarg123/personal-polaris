@@ -1,0 +1,4 @@
+# Bootstrap Configuration Variables
+project_id = "your-gcp-project-id"
+default_region = "us-central1"
+state_bucket_location = "US"
