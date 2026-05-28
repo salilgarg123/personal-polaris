@@ -55,7 +55,7 @@ resource "google_artifact_registry_repository" "ghcr_remote" {
     }
     upstream_credentials {
       username_password_credentials {
-        username                = "polaris-gcp"
+        username                = "mukund-gohil-atos"
         password_secret_version = "${google_secret_manager_secret.ghcr_pull_token.id}/versions/latest"
       }
     }
