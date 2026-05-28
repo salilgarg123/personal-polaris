@@ -1,10 +1,9 @@
 resource "google_cloud_run_v2_service" "polaris_portal" {
-  name        = "polaris-portal-${var.environment}"
-  provider    = google-beta
-  location    = var.default_region
-  project     = var.project_id
-  iap_enabled = true
-  ingress     = "INGRESS_TRAFFIC_ALL"
+  name     = "polaris-portal-${var.environment}"
+  provider = google-beta
+  location = var.default_region
+  project  = var.project_id
+  ingress  = "INGRESS_TRAFFIC_ALL"
 
   template {
     service_account = google_service_account.polaris_portal.email
@@ -197,7 +196,7 @@ resource "google_cloud_run_v2_service" "keycloak" {
       }
     }
     containers {
-      image = var.container_images.keycloak
+      image   = var.container_images.keycloak
       command = ["/opt/keycloak/bin/kc.sh"]
       args    = ["start-dev"]
       ports {

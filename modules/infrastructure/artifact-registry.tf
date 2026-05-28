@@ -41,22 +41,18 @@ resource "google_secret_manager_secret" "ghcr_pull_token" {
 resource "google_artifact_registry_repository" "ghcr_remote" {
   location      = var.default_region
   repository_id = "ghcr-remote"
-  description   = "Remote repository proxying ghcr.io for Polaris images"
   format        = "DOCKER"
   mode          = "REMOTE_REPOSITORY"
   project       = var.project_id
 
   remote_repository_config {
-    description = "GitHub Container Registry"
-    docker_repository {
-      custom_repository {
-        uri = "https://ghcr.io"
-      }
+    common_repository {
+      uri = "https://ghcr.io"
     }
     upstream_credentials {
       username_password_credentials {
         username                = "mukund-gohil-atos"
-        password_secret_version = "${google_secret_manager_secret.ghcr_pull_token.id}/versions/latest"
+        password_secret_version = "projects/1008989050075/secrets/ghcr-pull-token/versions/latest"
       }
     }
   }
