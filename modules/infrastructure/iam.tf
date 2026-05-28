@@ -163,3 +163,36 @@ resource "google_secret_manager_secret_iam_member" "keycloak_db_password_accesso
   member    = "serviceAccount:${google_service_account.keycloak.email}"
   project   = var.project_id
 }
+
+# Allow unauthenticated (public) access to all Cloud Run services
+resource "google_cloud_run_service_iam_member" "polaris_portal_public" {
+  location = google_cloud_run_v2_service.polaris_portal.location
+  project  = var.project_id
+  service  = google_cloud_run_v2_service.polaris_portal.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+resource "google_cloud_run_service_iam_member" "knowledge_mgmt_public" {
+  location = google_cloud_run_v2_service.knowledge_management_api.location
+  project  = var.project_id
+  service  = google_cloud_run_v2_service.knowledge_management_api.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+resource "google_cloud_run_service_iam_member" "opensearch_public" {
+  location = google_cloud_run_v2_service.opensearch_vector_db.location
+  project  = var.project_id
+  service  = google_cloud_run_v2_service.opensearch_vector_db.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+resource "google_cloud_run_service_iam_member" "keycloak_public" {
+  location = google_cloud_run_v2_service.keycloak.location
+  project  = var.project_id
+  service  = google_cloud_run_v2_service.keycloak.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}

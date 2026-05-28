@@ -16,6 +16,14 @@ cloudrun_memory        = "512Mi"
 cloudrun_min_instances = 0
 cloudrun_max_instances = 3
 
+# Container Images
+container_images = {
+  polaris_portal = "us-central1-docker.pkg.dev/prj-d-bu1-sample-base-qopg/ghcr-remote/in-atos-aara/atos-polaris-ai-portal:1.0.65"
+  knowledge_api  = "us-central1-docker.pkg.dev/prj-d-bu1-sample-base-qopg/ghcr-remote/in-atos-aara/atos-ai-knowledge:1.0.48"
+  opensearch     = "gcr.io/cloudrun/hello"
+  keycloak       = "us-central1-docker.pkg.dev/prj-d-bu1-sample-base-qopg/quay-remote/keycloak/keycloak:26.4.0"
+}
+
 # IAP access
 iap_users = []
 
