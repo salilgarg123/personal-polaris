@@ -1,17 +1,10 @@
-# Cloud SQL Configuration
-# This file contains all database-related resources
-
-# Local values for Cloud SQL configuration
 locals {
-  # For private IP instances, VPC subnet is automatically included
-  # Only use additional authorized networks if specified
-  # Note: VPC subnet is automatically authorized for private IP instances
+  cloudsql_instance_name  = var.cloudsql_instance_name != null ? var.cloudsql_instance_name : "polaris-${var.environment}-postgres"
   all_authorized_networks = var.cloudsql_authorized_networks
 }
 
-# Cloud SQL PostgreSQL Instance with Private IP
 resource "google_sql_database_instance" "postgres_instance" {
-  name             = coalesce(var.cloudsql_instance_name, "polaris-${var.environment}-postgres")
+  name             = local.cloudsql_instance_name
   database_version = var.cloudsql_database_version
   region           = var.default_region
   project          = var.project_id
@@ -19,20 +12,18 @@ resource "google_sql_database_instance" "postgres_instance" {
   deletion_protection = var.cloudsql_deletion_protection
 
   settings {
-    tier                        = var.cloudsql_tier
-    availability_type          = var.environment == "prod" ? "REGIONAL" : "ZONAL"
-    disk_size                  = var.cloudsql_disk_size
-    disk_type                  = var.cloudsql_disk_type
-    disk_autoresize           = true
-    disk_autoresize_limit     = var.cloudsql_disk_size * 3
+    tier                  = var.cloudsql_tier
+    availability_type     = var.environment == "prod" ? "REGIONAL" : "ZONAL"
+    disk_size             = var.cloudsql_disk_size
+    disk_type             = var.cloudsql_disk_type
+    disk_autoresize       = true
+    disk_autoresize_limit = var.cloudsql_disk_size * 3
 
-    # Network configuration for private IP with VPC-only access
     ip_configuration {
       ipv4_enabled                                  = false
-      private_network                              = google_compute_network.vpc_network.id
+      private_network                               = data.google_compute_network.shared_vpc.id
       enable_private_path_for_google_cloud_services = true
-      
-      # Authorized networks - VPC subnet and any additional networks
+
       dynamic "authorized_networks" {
         for_each = local.all_authorized_networks
         content {
@@ -42,7 +33,6 @@ resource "google_sql_database_instance" "postgres_instance" {
       }
     }
 
-    # Backup configuration
     backup_configuration {
       enabled                        = var.cloudsql_backup_enabled
       start_time                     = var.cloudsql_backup_start_time
@@ -55,19 +45,17 @@ resource "google_sql_database_instance" "postgres_instance" {
       }
     }
 
-    # Maintenance window
     maintenance_window {
       day          = var.cloudsql_maintenance_window_day
       hour         = var.cloudsql_maintenance_window_hour
       update_track = "stable"
     }
 
-    # Database flags for PostgreSQL optimization
     database_flags {
       name  = "log_min_duration_statement"
       value = "1000"
     }
-    
+
     database_flags {
       name  = "log_connections"
       value = "on"
@@ -90,7 +78,6 @@ resource "google_sql_database_instance" "postgres_instance" {
   ]
 }
 
-# Databases for each service
 resource "google_sql_database" "marketplace_db" {
   name     = "marketplace"
   instance = google_sql_database_instance.postgres_instance.name
@@ -109,9 +96,6 @@ resource "google_sql_database" "keycloak_db" {
   project  = var.project_id
 }
 
-# Database users for each service with Secret Manager integration
-
-# Marketplace Database User
 resource "random_password" "marketplace_db_password" {
   length  = 32
   special = true
@@ -125,9 +109,7 @@ resource "google_secret_manager_secret" "marketplace_db_password" {
     auto {}
   }
 
-  depends_on = [
-    google_project_service.required_apis["secretmanager.googleapis.com"]
-  ]
+  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
 }
 
 resource "google_secret_manager_secret_version" "marketplace_db_password" {
@@ -142,7 +124,6 @@ resource "google_sql_user" "marketplace_user" {
   project  = var.project_id
 }
 
-# Knowledge Database User
 resource "random_password" "knowledge_db_password" {
   length  = 32
   special = true
@@ -156,9 +137,7 @@ resource "google_secret_manager_secret" "knowledge_db_password" {
     auto {}
   }
 
-  depends_on = [
-    google_project_service.required_apis["secretmanager.googleapis.com"]
-  ]
+  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
 }
 
 resource "google_secret_manager_secret_version" "knowledge_db_password" {
@@ -173,7 +152,6 @@ resource "google_sql_user" "knowledge_user" {
   project  = var.project_id
 }
 
-# Keycloak Database User
 resource "random_password" "keycloak_db_password" {
   length  = 32
   special = true
@@ -187,9 +165,7 @@ resource "google_secret_manager_secret" "keycloak_db_password" {
     auto {}
   }
 
-  depends_on = [
-    google_project_service.required_apis["secretmanager.googleapis.com"]
-  ]
+  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
 }
 
 resource "google_secret_manager_secret_version" "keycloak_db_password" {
