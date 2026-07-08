@@ -187,20 +187,3 @@ resource "google_secret_manager_secret" "kc_bootstrap_admin_password" {
   depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
 }
 
-resource "google_secret_manager_secret" "agents_client_secret" {
-  secret_id = "agents-client-secret"
-  project   = var.project_id
-  replication {
-    auto {}
-  }
-  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
-}
-
-resource "google_secret_manager_secret" "agents_payi_api_key" {
-  secret_id = "agents-payi-api-key"
-  project   = var.project_id
-  replication {
-    auto {}
-  }
-  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
-}

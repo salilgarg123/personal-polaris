@@ -68,7 +68,7 @@ resource "google_cloud_run_v2_service" "polaris_portal" {
       }
       env {
         name  = "AUTH_URL"
-        value = local.portal_url
+        value = "${local.portal_url}/auth"
       }
       env {
         name  = "DATABASE_URL"
@@ -180,58 +180,325 @@ resource "google_cloud_run_v2_service" "knowledge_management_api" {
       }
 
       env {
-        name  = "A_AUTH_ISSUER"
-        value = "${local.keycloak_url}/iam/realms/polaris-ai"
+        name  = "SERVICE_NAME"
+        value = "knowledge-management-api"
       }
       env {
-        name  = "A_DATABASE_URL"
-        value = "postgresql://knowledge@${google_sql_database_instance.postgres_instance.private_ip_address}:5432/${google_sql_database.knowledge_db.name}"
+        name  = "DB_HOST"
+        value = google_sql_database_instance.postgres_instance.private_ip_address
       }
       env {
-        name  = "A_APP_URL"
-        value = local.knowledge_api_url
+        name  = "ENVIRONMENT"
+        value = var.environment
       }
       env {
-        name  = "A_DEFAULT_MODEL_ID"
-        value = "gemini-1.5-pro"
+        name  = "DB_NAME"
+        value = google_sql_database.knowledge_db.name
       }
       env {
-        name  = "A_AUTH_CLIENT_ID"
-        value = "knowledge-api"
+        name  = "DB_PASSWORD_SECRET"
+        value = "knowledge-db-password-dev"
       }
       env {
-        name = "A_AUTH_CLIENT_SECRET"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.client_secret.secret_id
-            version = "latest"
-          }
-        }
+        name  = "DB_USER"
+        value = "knowledge"
       }
       env {
         name  = "OTEL_SERVICE_NAME"
         value = "knowledge-mgmt-api-dev"
       }
       env {
-        name  = "A_KNOWLEDGE_BASE_URL"
-        value = local.knowledge_api_url
+        name  = "A_AUTH_CLIENT_ID"
+        value = "knowledge"
       }
       env {
-        name  = "A_AUTH_ISSUER_ADMIN"
-        value = "${local.keycloak_url}/iam/realms/polaris-ai"
+        name  = "A_USER_DOC_COUNT_LIMIT"
+        value = "10"
       }
       env {
-        name  = "A_PAYI_BASE_URL"
-        value = local.admin_management_url
+        name  = "A_AI_EMBEDDING_MODEL"
+        value = "models/text-embedding-004"
       }
       env {
-        name = "A_PAYI_API_KEY"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.google_api_key.secret_id
-            version = "latest"
-          }
-        }
+        name  = "A_SNOWFLAKE_HOST"
+        value = "WDPKUDW-ABC41107.snowflakecomputing.com"
+      }
+      env {
+        name  = "A_SNOWFLAKE_DATABASE"
+        value = "CORTEX_ANALYST_DEMO"
+      }
+      env {
+        name  = "A_SNOWFLAKE_SCHEMA"
+        value = "REVENUE_TIMESERIES"
+      }
+      env {
+        name  = "A_SNOWFLAKE_WAREHOUSE"
+        value = "CORTEX_ANALYST_WH"
+      }
+      env {
+        name  = "A_SNOWFLAKE_ROLE"
+        value = "ACCOUNTADMIN"
+      }
+      env {
+        name  = "A_SNOWFLAKE_ACCOUNT"
+        value = "ABC41107"
+      }
+      env {
+        name  = "A_SNOWFLAKE_USER"
+        value = "atosPolarisAWS"
+      }
+      env {
+        name  = "A_SNOWFLAKE_STAGE"
+        value = "RAW_DATA"
+      }
+      env {
+        name  = "A_SNOWFLAKE_FILE"
+        value = "revenue_timeseries.yaml"
+      }
+      env {
+        name  = "A_SNOWFLAKE_SERVICEPATH"
+        value = "https://wdpkudw-abc41107.snowflakecomputing.com/api/v2/cortex/analyst/message"
+      }
+      env {
+        name  = "A_SNOWFLAKE_SERVICE_PORT"
+        value = "443"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_NAME_ADVANCED"
+        value = "gpt-5.4"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_NAME_BASIC"
+        value = "gpt-5.4-min"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_NAME_INTERMEDIATE"
+        value = "gpt-5.4-nano"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_VERSION_ADVANCED"
+        value = "2024-12-01-preview"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_VERSION_BASIC"
+        value = "2024-12-01-preview"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_VERSION_INTERMEDIATE"
+        value = "2024-12-01-preview"
+      }
+      env {
+        name  = "A_IMAGE_API_VERSION"
+        value = "2024-02-01"
+      }
+      env {
+        name  = "A_IMAGE_DEPLOYMENT_NAME"
+        value = "gpt-image-1-mini"
+      }
+      env {
+        name  = "A_IMAGE_SIZE"
+        value = "1024x1024"
+      }
+      env {
+        name  = "A_IMAGE_QUALITY"
+        value = "standard"
+      }
+      env {
+        name  = "A_MMDC_BASE_PATH"
+        value = "mmdc"
+      }
+      env {
+        name  = "A_SERVICE_NAME"
+        value = "mermaid-tool"
+      }
+      env {
+        name  = "A_GUARDRAILS_GENAI_MODEL"
+        value = "gemini-2.5-flash"
+      }
+      env {
+        name  = "_INNOCUOUS_ENV_VAR"
+        value = "true"
+      }
+      env {
+        name  = "A_SNOW_INSTANCE"
+        value = "https://dev281067.service-now.com"
+      }
+      env {
+        name  = "A_SNOW_TABLE"
+        value = "incident"
+      }
+      env {
+        name  = "A_SNOW_USER"
+        value = "admin"
+      }
+      env {
+        name  = "A_PROMPT_DELETION_DAYS"
+        value = "100000"
+      }
+      env {
+        name  = "A_PII_MASKING_ENABLED"
+        value = "true"
+      }
+      env {
+        name  = "A_PII_CONFIDENCE_THRESHOLD"
+        value = "0.5"
+      }
+      env {
+        name  = "A_SNOWFLAKE_ACCOUNT_CORTEX"
+        value = "moodbpj-atos_aws_us_east_rd"
+      }
+      env {
+        name  = "A_SNOWFLAKE_USER_CORTEX"
+        value = "MCHOUBEY"
+      }
+      env {
+        name  = "A_SNOWFLAKE_ROLE_CORTEX"
+        value = "ACCOUNTADMIN"
+      }
+      env {
+        name  = "A_SNOWFLAKE_WAREHOUSE_CORTEX"
+        value = "CORTEX_ANALYST_WH"
+      }
+      env {
+        name  = "A_SNOWFLAKE_DATABASE_CORTEX"
+        value = "SNOWFLAKE_DOCUMENTATION"
+      }
+      env {
+        name  = "A_SNOWFLAKE_SCHEMA_CORTEX"
+        value = "SHARED"
+      }
+      env {
+        name  = "A_GUARDRAILS_PII_CHECK_ACTIVE"
+        value = "false"
+      }
+      env {
+        name  = "A_LLM_PROVIDER"
+        value = "google-gemini"
+      }
+      env {
+        name  = "A_GOOGLE_GEMINI_CHAT_MODEL_BASIC"
+        value = "gemini-3-flash-preview"
+      }
+      env {
+        name  = "A_GOOGLE_GEMINI_CHAT_MODEL_INTERMEDIATE"
+        value = "gemini-3.5-flash"
+      }
+      env {
+        name  = "A_GOOGLE_GEMINI_CHAT_MODEL_ADVANCED"
+        value = "gemini-3.1-pro-preview"
+      }
+      env {
+        name  = "A_GOOGLE_GEMINI_EMBEDDING_MODEL"
+        value = "models/gemini-embedding-2"
+      }
+      env {
+        name  = "A_GOOGLE_GEMINI_TIMEOUT"
+        value = "180"
+      }
+      env {
+        name  = "A_GUARDRAILS_ENABLED"
+        value = "true"
+      }
+      env {
+        name  = "A_GUARDRAILS_JAILBREAK_CHECK_ACTIVE"
+        value = "true"
+      }
+      env {
+        name  = "A_GUARDRAILS_BIAS_CHECK_ACTIVE"
+        value = "true"
+      }
+      env {
+        name  = "A_GUARDRAILS_CONTENT_CHECK_ACTIVE"
+        value = "true"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_NAME_LLAMA"
+        value = "Llama-4-Maverick-17B-128E-Instruct-FP8"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_VERSION_LLAMA"
+        value = "2024-05-01-preview"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_NAME_MISTRAL"
+        value = "mistral-small-2503"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_VERSION_MISTRAL"
+        value = "2024-05-01-preview"
+      }
+      env {
+        # TODO: migrate to Secret Manager
+        name  = "A_AI_API_KEY_AUTO"
+        value = "PLACEHOLDER"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_NAME_AUTO"
+        value = "model-router"
+      }
+      env {
+        name  = "A_AI_GENERATION_MODEL_VERSION_AUTO"
+        value = "2024-12-01-preview"
+      }
+      env {
+        name  = "A_IMAGE_GEN_ENDPOINT"
+        value = "https://ai-foundry-polaris-prod-git-gewc.cognitiveservices.azure.com/openai/deployments/gpt-image-1-mini/images/generations?api-version=2024-02-01"
+      }
+      env {
+        # TODO: migrate to Secret Manager
+        name  = "A_IMAGE_GEN_API_KEY"
+        value = "PLACEHOLDER"
+      }
+      env {
+        # TODO: migrate to Secret Manager
+        name  = "A_AI_SEARCH_API_KEY"
+        value = "PLACEHOLDER"
+      }
+      env {
+        name  = "SPX_SUBSCRIPTION_ID"
+        value = "b501a57e-71d5-4887-b72c-a0c961a0f281"
+      }
+      env {
+        name  = "SPX_RESOURCE_GROUP"
+        value = "polaris-solutions-rg"
+      }
+      env {
+        name  = "SPX_DISPATCHER_JOB_NAME"
+        value = "spx-dispatcher"
+      }
+      env {
+        name  = "A_RAG_SEARCH_PROVIDER"
+        value = "OPENSEARCH"
+      }
+      env {
+        name  = "SSP_URL"
+        value = "https://salesservice.myatos.net/overall/en/salesmaterial.cfm?obj="
+      }
+      env {
+        name  = "A_VECTOR_DB_HOST"
+        value = "https://opensearch-vector-${var.environment}-${local.cloud_run_domain}"
+      }
+      env {
+        name  = "A_FILE_SERVER_URL"
+        value = "${local.portal_url}/knowledge/files"
+      }
+      env {
+        name  = "A_PUBLIC_URL"
+        value = "${local.portal_url}/knowledge"
+      }
+      env {
+        # TODO: migrate to Secret Manager
+        name  = "A_DATABASE_URL"
+        value = "postgresql://postgres:PLACEHOLDER@10.83.0.3:5432/knowledge"
+      }
+      env {
+        # TODO: migrate to Secret Manager
+        name  = "A_GOOGLE_GEMINI_API_KEY"
+        value = "PLACEHOLDER"
+      }
+      env {
+        name  = "A_OPENSEARCH_EMBEDDING_DIMENSION"
+        value = "3072"
       }
       env {
         name = "APPLICATIONINSIGHTS_CONNECTION_STRING"
@@ -380,11 +647,11 @@ resource "google_cloud_run_v2_service" "opensearch_vector_db" {
       }
       env {
         name  = "OPENSEARCH_JAVA_OPTS"
-        value = "-Xms512m -Xmx512m"
+        value = "-Xms2g -Xmx4g"
       }
       env {
         name  = "DISABLE_SECURITY_PLUGIN"
-        value = "false"
+        value = "true"
       }
       env {
         name  = "DISABLE_SSL"
@@ -536,11 +803,11 @@ resource "google_cloud_run_v2_service" "keycloak" {
       }
       env {
         name  = "KC_HOSTNAME"
-        value = local.keycloak_hostname
+        value = "${local.keycloak_url}/iam"
       }
       env {
         name  = "KC_HOSTNAME_ADMIN"
-        value = local.keycloak_hostname
+        value = "${local.keycloak_url}/iam"
       }
       env {
         name  = "ENVIRONMENT"
@@ -713,13 +980,9 @@ resource "google_cloud_run_v2_service" "agents" {
         value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
-        name = "A_DATABASE_URL"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.agent_db_url.secret_id
-            version = "latest"
-          }
-        }
+        # TODO: migrate to Secret Manager
+        name  = "A_DATABASE_URL"
+        value = "postgresql://postgres:PLACEHOLDER@10.83.0.3:5432/agents"
       }
       env {
         name  = "A_APP_URL"
@@ -727,20 +990,16 @@ resource "google_cloud_run_v2_service" "agents" {
       }
       env {
         name  = "A_DEFAULT_MODEL_ID"
-        value = "gemini-1.5-pro"
+        value = "gpt-4.1"
       }
       env {
         name  = "A_AUTH_CLIENT_ID"
         value = "agents"
       }
       env {
-        name = "A_AUTH_CLIENT_SECRET"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.agents_client_secret.secret_id
-            version = "latest"
-          }
-        }
+        # TODO: migrate to Secret Manager
+        name  = "A_AUTH_CLIENT_SECRET"
+        value = "PLACEHOLDER"
       }
       env {
         name  = "OTEL_SERVICE_NAME"
@@ -759,13 +1018,9 @@ resource "google_cloud_run_v2_service" "agents" {
         value = local.admin_management_url
       }
       env {
-        name = "A_PAYI_API_KEY"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.agents_payi_api_key.secret_id
-            version = "latest"
-          }
-        }
+        # TODO: migrate to Secret Manager
+        name  = "A_PAYI_API_KEY"
+        value = "PLACEHOLDER"
       }
     }
   }
