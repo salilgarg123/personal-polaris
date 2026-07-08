@@ -186,20 +186,6 @@ resource "google_secret_manager_secret_iam_member" "keycloak_bootstrap_admin_pas
   member    = "serviceAccount:${google_service_account.keycloak.email}"
 }
 
-resource "google_secret_manager_secret_iam_member" "agents_client_secret_access" {
-  project   = var.project_id
-  secret_id = google_secret_manager_secret.agents_client_secret.secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.agents.email}"
-}
-
-resource "google_secret_manager_secret_iam_member" "agents_payi_api_key_access" {
-  project   = var.project_id
-  secret_id = google_secret_manager_secret.agents_payi_api_key.secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.agents.email}"
-}
-
 resource "google_secret_manager_secret_iam_member" "agents_db_url_access" {
   project   = var.project_id
   secret_id = google_secret_manager_secret.agent_db_url.secret_id

@@ -45,7 +45,7 @@ resource "google_storage_bucket" "opensearch_data" {
 
 resource "google_storage_bucket" "marketplace_data" {
   name                        = "bkt-prj-d-bu1-sample-base-marketplace-dev"
-  location                    = var.default_region
+  location                    = "US"
   project                     = var.project_id
   force_destroy               = true
   uniform_bucket_level_access = true
