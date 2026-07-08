@@ -42,3 +42,18 @@ resource "google_storage_bucket" "opensearch_data" {
     project     = "polaris"
   }
 }
+
+resource "google_storage_bucket" "marketplace_data" {
+  name                        = "bkt-prj-d-bu1-sample-base-marketplace-dev"
+  location                    = var.default_region
+  project                     = var.project_id
+  force_destroy               = true
+  uniform_bucket_level_access = true
+  storage_class               = "STANDARD"
+
+  labels = {
+    environment = var.environment
+    managed-by  = "terraform"
+    project     = "polaris"
+  }
+}
