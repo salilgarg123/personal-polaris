@@ -7,6 +7,15 @@ resource "google_secret_manager_secret" "opensearch_initial_admin_password" {
   depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
 }
 
+resource "google_secret_manager_secret" "opensearch_password" {
+  secret_id = "opensearch_password"
+  project   = var.project_id
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
+}
+
 resource "google_secret_manager_secret" "admin_client_secret" {
   secret_id = "admin-client-secret"
   project   = var.project_id
@@ -171,6 +180,24 @@ resource "google_secret_manager_secret" "snowflake_password" {
 
 resource "google_secret_manager_secret" "kc_bootstrap_admin_password" {
   secret_id = "KC_BOOTSTRAP_ADMIN_PASSWORD"
+  project   = var.project_id
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
+}
+
+resource "google_secret_manager_secret" "agents_client_secret" {
+  secret_id = "agents-client-secret"
+  project   = var.project_id
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.required_apis["secretmanager.googleapis.com"]]
+}
+
+resource "google_secret_manager_secret" "agents_payi_api_key" {
+  secret_id = "agents-payi-api-key"
   project   = var.project_id
   replication {
     auto {}

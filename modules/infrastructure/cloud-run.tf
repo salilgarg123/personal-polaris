@@ -1,3 +1,14 @@
+locals {
+  cloud_run_domain     = "${data.google_project.project.number}.${var.default_region}.run.app"
+  keycloak_hostname    = "keycloak-${var.environment}-${local.cloud_run_domain}"
+  keycloak_url         = "https://${local.keycloak_hostname}"
+  portal_url           = "https://polaris-portal-${var.environment}-${local.cloud_run_domain}"
+  knowledge_api_url    = "https://knowledge-mgmt-api-${var.environment}-${local.cloud_run_domain}"
+  agents_url           = "https://agents-${var.environment}-${local.cloud_run_domain}"
+  admin_management_url = "https://admin-management-${var.environment}-${local.cloud_run_domain}"
+  marketplace_url      = "https://atos-ai-marketplace-${local.cloud_run_domain}"
+}
+
 resource "google_cloud_run_v2_service" "polaris_portal" {
   name     = "polaris-portal-${var.environment}"
   provider = google-beta
@@ -57,7 +68,7 @@ resource "google_cloud_run_v2_service" "polaris_portal" {
       }
       env {
         name  = "AUTH_URL"
-        value = "https://polaris-portal-dev-1008989050075.us-central1.run.app"
+        value = local.portal_url
       }
       env {
         name  = "DATABASE_URL"
@@ -69,27 +80,27 @@ resource "google_cloud_run_v2_service" "polaris_portal" {
       }
       env {
         name  = "AUTH_KEYCLOAK_ISSUER"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name  = "KNOWLEDGE_BASE_URL"
-        value = "https://knowledge-mgmt-api-dev-1008989050075.us-central1.run.app"
+        value = local.knowledge_api_url
       }
       env {
         name  = "AGENT_BASE_URL"
-        value = "https://agents-dev-1008989050075.us-central1.run.app"
+        value = local.agents_url
       }
       env {
         name  = "ADMIN_BASE_URL"
-        value = "https://admin-management-dev-1008989050075.us-central1.run.app"
+        value = local.admin_management_url
       }
       env {
         name  = "MARKETPLACE_BASE_URL"
-        value = "https://atos-ai-marketplace-1008989050075.us-central1.run.app"
+        value = local.marketplace_url
       }
       env {
         name  = "NEXT_PUBLIC_MARKETPLACE_URL"
-        value = "https://atos-ai-marketplace-1008989050075.us-central1.run.app"
+        value = local.marketplace_url
       }
       env {
         name = "AUTH_SECRET"
@@ -170,7 +181,7 @@ resource "google_cloud_run_v2_service" "knowledge_management_api" {
 
       env {
         name  = "A_AUTH_ISSUER"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name  = "A_DATABASE_URL"
@@ -178,7 +189,7 @@ resource "google_cloud_run_v2_service" "knowledge_management_api" {
       }
       env {
         name  = "A_APP_URL"
-        value = "https://knowledge-mgmt-api-dev-1008989050075.us-central1.run.app"
+        value = local.knowledge_api_url
       }
       env {
         name  = "A_DEFAULT_MODEL_ID"
@@ -203,15 +214,15 @@ resource "google_cloud_run_v2_service" "knowledge_management_api" {
       }
       env {
         name  = "A_KNOWLEDGE_BASE_URL"
-        value = "https://knowledge-mgmt-api-dev-1008989050075.us-central1.run.app"
+        value = local.knowledge_api_url
       }
       env {
         name  = "A_AUTH_ISSUER_ADMIN"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name  = "A_PAYI_BASE_URL"
-        value = "https://agents-dev-1008989050075.us-central1.run.app"
+        value = local.admin_management_url
       }
       env {
         name = "A_PAYI_API_KEY"
@@ -235,7 +246,7 @@ resource "google_cloud_run_v2_service" "knowledge_management_api" {
         name = "A_VECTOR_DB_PASSWORD"
         value_source {
           secret_key_ref {
-            secret  = "opensearch_password"
+            secret  = google_secret_manager_secret.opensearch_password.secret_id
             version = "latest"
           }
         }
@@ -525,11 +536,11 @@ resource "google_cloud_run_v2_service" "keycloak" {
       }
       env {
         name  = "KC_HOSTNAME"
-        value = "keycloak-dev-1008989050075.us-central1.run.app"
+        value = local.keycloak_hostname
       }
       env {
         name  = "KC_HOSTNAME_ADMIN"
-        value = "keycloak-dev-1008989050075.us-central1.run.app"
+        value = local.keycloak_hostname
       }
       env {
         name  = "ENVIRONMENT"
@@ -612,7 +623,7 @@ resource "google_cloud_run_v2_service" "admin_management" {
 
       env {
         name  = "A_AUTH_ISSUER"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name  = "A_AUTH_CLIENT_ID"
@@ -624,7 +635,7 @@ resource "google_cloud_run_v2_service" "admin_management" {
       }
       env {
         name  = "A_AUTH_ISSUER_ADMIN"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name = "A_AUTH_CLIENT_SECRET"
@@ -697,18 +708,22 @@ resource "google_cloud_run_v2_service" "agents" {
         }
       }
 
-      # TODO: Sensitive values are currently plain text to match exported YAML and should be migrated to Secret Manager.
       env {
         name  = "A_AUTH_ISSUER"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
-        name  = "A_DATABASE_URL"
-        value = "postgresql://agents@${google_sql_database_instance.postgres_instance.private_ip_address}:5432/${google_sql_database.marketplace_db.name}"
+        name = "A_DATABASE_URL"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.agent_db_url.secret_id
+            version = "latest"
+          }
+        }
       }
       env {
         name  = "A_APP_URL"
-        value = "https://agents-dev-1008989050075.us-central1.run.app"
+        value = local.agents_url
       }
       env {
         name  = "A_DEFAULT_MODEL_ID"
@@ -719,8 +734,13 @@ resource "google_cloud_run_v2_service" "agents" {
         value = "agents"
       }
       env {
-        name  = "A_AUTH_CLIENT_SECRET"
-        value = "REPLACE_WITH_EXPORTED_YAML_VALUE"
+        name = "A_AUTH_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.agents_client_secret.secret_id
+            version = "latest"
+          }
+        }
       }
       env {
         name  = "OTEL_SERVICE_NAME"
@@ -728,19 +748,24 @@ resource "google_cloud_run_v2_service" "agents" {
       }
       env {
         name  = "A_KNOWLEDGE_BASE_URL"
-        value = "https://knowledge-mgmt-api-dev-1008989050075.us-central1.run.app"
+        value = local.knowledge_api_url
       }
       env {
         name  = "A_AUTH_ISSUER_ADMIN"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name  = "A_PAYI_BASE_URL"
-        value = "https://admin-management-dev-1008989050075.us-central1.run.app"
+        value = local.admin_management_url
       }
       env {
-        name  = "A_PAYI_API_KEY"
-        value = "REPLACE_WITH_EXPORTED_YAML_VALUE"
+        name = "A_PAYI_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.agents_payi_api_key.secret_id
+            version = "latest"
+          }
+        }
       }
     }
   }
@@ -806,7 +831,7 @@ resource "google_cloud_run_v2_service" "marketplace" {
 
       env {
         name  = "A_AUTH_ISSUER"
-        value = "https://keycloak-dev-1008989050075.us-central1.run.app/iam/realms/polaris-ai"
+        value = "${local.keycloak_url}/iam/realms/polaris-ai"
       }
       env {
         name  = "A_AUTH_CLIENT_ID"
@@ -818,7 +843,7 @@ resource "google_cloud_run_v2_service" "marketplace" {
       }
       env {
         name  = "A_APP_URL"
-        value = "https://atos-ai-marketplace-1008989050075.us-central1.run.app"
+        value = local.marketplace_url
       }
       env {
         name  = "A_DATABASE_URL"
@@ -860,6 +885,7 @@ resource "google_cloud_run_v2_service" "marketplace" {
         read_only = false
       }
     }
+    # Intentional: exported Cloud Run config mounts the same bucket twice so the app gets separate /app/www and /app/assets paths.
     volumes {
       name = "marketplace-assets-volume"
       gcs {

@@ -118,7 +118,7 @@ resource "google_secret_manager_secret_iam_member" "knowledge_appinsights_conn_s
 
 resource "google_secret_manager_secret_iam_member" "knowledge_opensearch_password_access" {
   project   = var.project_id
-  secret_id = "opensearch_password"
+  secret_id = google_secret_manager_secret.opensearch_password.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.knowledge_management_api.email}"
 }
@@ -184,6 +184,27 @@ resource "google_secret_manager_secret_iam_member" "keycloak_bootstrap_admin_pas
   secret_id = google_secret_manager_secret.kc_bootstrap_admin_password.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.keycloak.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "agents_client_secret_access" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.agents_client_secret.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.agents.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "agents_payi_api_key_access" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.agents_payi_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.agents.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "agents_db_url_access" {
+  project   = var.project_id
+  secret_id = google_secret_manager_secret.agent_db_url.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.agents.email}"
 }
 
 resource "google_cloud_run_service_iam_member" "connectivity_test_to_knowledge_mgmt" {
