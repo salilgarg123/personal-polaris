@@ -1,7 +1,3 @@
-# Service Accounts Configuration
-# This file contains all service account definitions for Cloud Run services
-
-# Service Accounts for Cloud Run Services
 resource "google_service_account" "polaris_portal" {
   account_id   = "polaris-portal-${var.environment}"
   display_name = "Polaris Portal Service Account (${var.environment})"
