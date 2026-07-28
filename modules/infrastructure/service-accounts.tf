@@ -32,3 +32,24 @@ resource "google_service_account" "connectivity_test" {
   description  = "Service account for Connectivity Test Cloud Run service in ${var.environment} environment"
   project      = var.project_id
 }
+
+resource "google_service_account" "atos_ai_marketplace" {
+  account_id   = "atos-ai-marketplace"
+  display_name = "Atos AI Marketplace Service Account (${var.environment})"
+  description  = "Service account for Atos AI Marketplace Cloud Run service in ${var.environment} environment"
+  project      = var.project_id
+}
+
+resource "google_service_account" "admin_management_api" {
+  account_id   = "admin-management-api"
+  display_name = "Admin Management API Service Account (${var.environment})"
+  description  = "Service account for Admin Management API Cloud Run service in ${var.environment} environment"
+  project      = var.project_id
+}
+
+resource "google_service_account" "agents" {
+  account_id   = "agents-dev"
+  display_name = "Agents Service Account (${var.environment})"
+  description  = "Service account for Agents Cloud Run service in ${var.environment} environment"
+  project      = var.project_id
+}
