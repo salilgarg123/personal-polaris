@@ -24,6 +24,9 @@ output "service_accounts" {
     knowledge_management_api = { email = google_service_account.knowledge_management_api.email, name = google_service_account.knowledge_management_api.name, id = google_service_account.knowledge_management_api.id }
     opensearch_vector_db     = { email = google_service_account.opensearch_vector_db.email, name = google_service_account.opensearch_vector_db.name, id = google_service_account.opensearch_vector_db.id }
     keycloak                 = { email = google_service_account.keycloak.email, name = google_service_account.keycloak.name, id = google_service_account.keycloak.id }
+    marketplace              = { email = google_service_account.atos_ai_marketplace.email, name = google_service_account.atos_ai_marketplace.name, id = google_service_account.atos_ai_marketplace.id }
+    admin_management         = { email = google_service_account.admin_management_api.email, name = google_service_account.admin_management_api.name, id = google_service_account.admin_management_api.id }
+    agents                   = { email = google_service_account.agents.email, name = google_service_account.agents.name, id = google_service_account.agents.id }
   }
 }
 
@@ -56,22 +59,29 @@ output "secret_manager_secrets" {
 output "cloudrun_services" {
   value = {
     polaris_portal           = { name = google_cloud_run_v2_service.polaris_portal.name, url = google_cloud_run_v2_service.polaris_portal.uri, access_type = "external" }
-    knowledge_management_api = { name = google_cloud_run_v2_service.knowledge_management_api.name, url = google_cloud_run_v2_service.knowledge_management_api.uri, access_type = "internal" }
-    opensearch_vector_db     = { name = google_cloud_run_v2_service.opensearch_vector_db.name, url = google_cloud_run_v2_service.opensearch_vector_db.uri, access_type = "internal" }
-    keycloak                 = { name = google_cloud_run_v2_service.keycloak.name, url = google_cloud_run_v2_service.keycloak.uri, access_type = "internal" }
+    knowledge_management_api = { name = google_cloud_run_v2_service.knowledge_management_api.name, url = google_cloud_run_v2_service.knowledge_management_api.uri, access_type = "external" }
+    opensearch_vector_db     = { name = google_cloud_run_v2_service.opensearch_vector_db.name, url = google_cloud_run_v2_service.opensearch_vector_db.uri, access_type = "external" }
+    keycloak                 = { name = google_cloud_run_v2_service.keycloak.name, url = google_cloud_run_v2_service.keycloak.uri, access_type = "external" }
+    admin_management         = { name = google_cloud_run_v2_service.admin_management.name, url = google_cloud_run_v2_service.admin_management.uri, access_type = "external" }
+    agents                   = { name = google_cloud_run_v2_service.agents.name, url = google_cloud_run_v2_service.agents.uri, access_type = "external" }
+    marketplace              = { name = google_cloud_run_v2_service.marketplace.name, url = google_cloud_run_v2_service.marketplace.uri, access_type = "external" }
   }
 }
 
 output "external_service_urls" {
-  value = { polaris_portal = google_cloud_run_v2_service.polaris_portal.uri }
+  value = {
+    polaris_portal   = google_cloud_run_v2_service.polaris_portal.uri
+    marketplace      = google_cloud_run_v2_service.marketplace.uri
+    admin_management = google_cloud_run_v2_service.admin_management.uri
+    agents           = google_cloud_run_v2_service.agents.uri
+    keycloak         = google_cloud_run_v2_service.keycloak.uri
+    knowledge_api    = google_cloud_run_v2_service.knowledge_management_api.uri
+    opensearch       = google_cloud_run_v2_service.opensearch_vector_db.uri
+  }
 }
 
 output "internal_service_urls" {
-  value = {
-    knowledge_management_api = google_cloud_run_v2_service.knowledge_management_api.uri
-    opensearch_vector_db     = google_cloud_run_v2_service.opensearch_vector_db.uri
-    keycloak                 = google_cloud_run_v2_service.keycloak.uri
-  }
+  value = {}
 }
 
 output "bastion_host" {
@@ -89,5 +99,6 @@ output "storage_buckets" {
     knowledge_data     = { name = google_storage_bucket.knowledge_data.name, url = google_storage_bucket.knowledge_data.url }
     keycloak_providers = { name = google_storage_bucket.keycloak_providers.name, url = google_storage_bucket.keycloak_providers.url }
     opensearch_data    = { name = google_storage_bucket.opensearch_data.name, url = google_storage_bucket.opensearch_data.url }
+    marketplace_data   = { name = google_storage_bucket.marketplace_data.name, url = google_storage_bucket.marketplace_data.url }
   }
 }

@@ -1,13 +1,13 @@
 module "polaris_infrastructure" {
   source = "../../modules/infrastructure"
 
-  project_id              = var.project_id
-  environment             = "dev"
-  default_region          = var.default_region
-  default_zone            = var.default_zone
-  shared_vpc_host_project = var.shared_vpc_host_project
-  shared_vpc_network_name = var.shared_vpc_network_name
-  shared_vpc_subnet_name  = var.shared_vpc_subnet_name
+  project_id               = var.project_id
+  environment              = "dev"
+  default_region           = var.default_region
+  default_zone             = var.default_zone
+  shared_vpc_host_project  = var.shared_vpc_host_project
+  shared_vpc_network_name  = var.shared_vpc_network_name
+  shared_vpc_subnet_name   = var.shared_vpc_subnet_name
   private_ip_prefix_length = var.private_ip_prefix_length
 
   cloudsql_instance_name       = var.cloudsql_instance_name
@@ -16,11 +16,6 @@ module "polaris_infrastructure" {
   cloudsql_disk_size           = var.cloudsql_disk_size
   cloudsql_deletion_protection = var.cloudsql_deletion_protection
   cloudsql_authorized_networks = var.cloudsql_authorized_networks
-
-  cloudrun_cpu           = var.cloudrun_cpu
-  cloudrun_memory        = var.cloudrun_memory
-  cloudrun_min_instances = var.cloudrun_min_instances
-  cloudrun_max_instances = var.cloudrun_max_instances
 
   container_images = var.container_images
 

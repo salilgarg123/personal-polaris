@@ -95,31 +95,6 @@ variable "cloudsql_authorized_networks" {
   default = []
 }
 
-variable "cloudrun_cpu" {
-  type    = string
-  default = "1"
-}
-
-variable "cloudrun_memory" {
-  type    = string
-  default = "512Mi"
-}
-
-variable "cloudrun_min_instances" {
-  type    = number
-  default = 0
-}
-
-variable "cloudrun_max_instances" {
-  type    = number
-  default = 1
-}
-
-variable "cloudrun_port" {
-  type    = number
-  default = 8080
-}
-
 variable "iap_users" {
   type    = list(string)
   default = []
@@ -167,15 +142,21 @@ variable "bastion_schedule_timezone" {
 
 variable "container_images" {
   type = object({
-    polaris_portal = string
-    knowledge_api  = string
-    opensearch     = string
-    keycloak       = string
+    polaris_portal   = string
+    knowledge_api    = string
+    opensearch       = string
+    keycloak         = string
+    marketplace      = string
+    admin_management = string
+    agents           = string
   })
   default = {
-    polaris_portal = "gcr.io/cloudrun/hello"
-    knowledge_api  = "gcr.io/cloudrun/hello"
-    opensearch     = "gcr.io/cloudrun/hello"
-    keycloak       = "us-central1-docker.pkg.dev/prj-d-bu1-sample-base-qopg/quay-remote/keycloak/keycloak:26.4.0"
+    polaris_portal   = "gcr.io/cloudrun/hello"
+    knowledge_api    = "gcr.io/cloudrun/hello"
+    opensearch       = "docker.io/opensearchproject/opensearch:2"
+    keycloak         = "us-central1-docker.pkg.dev/prj-d-bu1-sample-base-qopg/quay-remote/keycloak/keycloak:26.4.0"
+    marketplace      = "gcr.io/cloudrun/hello"
+    admin_management = "gcr.io/cloudrun/hello"
+    agents           = "gcr.io/cloudrun/hello"
   }
 }
